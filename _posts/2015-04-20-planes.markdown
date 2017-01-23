@@ -49,7 +49,6 @@ Here is a summary of pros and cons:
 # How does nonparametric regression work?
 
 In a traditional parametric regression model, the response variable (i.e., dependent variable) is a **known** function of explanatory variables (i.e., independent variables regressor, and covariates). In a non-parametric regression model, however, we do **not** impose any functional form. Nonparametric model assumes that $y_i = g(x_i) + e_i$, for $i=1, 2, ……, n$, where $g(.)$ is an unspecified regression function. There are various ways to estimate regression (i.e., smoothing) function. The most common methods are:
-
 -	Regression Splines
 -	Kernel Estimation
 -	Local Polynomial Regression
@@ -65,7 +64,7 @@ Regression splines are useful when we expect that in different segments of the i
 
 
 
-![plot of chunk unnamed-chunk-2](https://github.com/hntek/hntek.github.io/tree/master/_posts/blog_post/unnamed-chunk-2-1.png)
+![plot of chunk unnamed-chunk-2](https://github.com/hntek/hntek.github.io/_posts/blog_post/unnamed-chunk-2-1.png)
 
 ## Kernel Estimation
 
