@@ -69,8 +69,6 @@ Regression splines are useful when we expect that in different segments of the i
 
 ![plot of chunk unnamed-chunk-2](../img/unnamed-chunk-2-1.png)
 
-![alternative](/img/unnamed-chunk-2-1.png)
-
 ## Kernel Estimation
 
 Kernel estimation uses observations in the local neighborhood of a given observation to determine the predicted value for that observation. A kernel estimation of an observation is determined by weighted average of the values of the response variable for the observations in the local neighborhood of that observation. The function used to determine the weight is called **kernel function**. The simplest version takes the mean value of the response variable in the local neighborhood of the focal observation. This kernel function is called *Boxcar* function. Boxcar function is rarely used as it leads to estimation which is not smooth. Most used alternative is Gaussian (i.e., Normal) Kernel. Normal Kernel function gives more weights to observations closer to the focal observation. 
@@ -91,7 +89,7 @@ The key to finding the most appropriate nonparametric estimation is to determine
 Since we don’t know the true $ g(t_i) )^2 $ , the optimum smoothing parameter can be approximated by a cross-validation. 
 If I plot total error and components, one can see that the choosing the right smoothing parameter is a balancing act between bias and the variance. 
 
-![plot of chunk unnamed-chunk-3](blog_post/unnamed-chunk-3-1.png)
+![plot of chunk unnamed-chunk-3](../img/unnamed-chunk-3-1.png)
 
 The blue solid line is the total error, the declining convex is the variance (red dashed line) and the increasing convex is the squared bias. Therefore, one can see that the increasing in the smoothing parameter has opposite effects on bias and variance. The right parameter struck a good balance between bias and variance. The following table summarizes the effects on the smoothing parameter.
 
@@ -119,7 +117,7 @@ ggplot(data=cigar, aes(x=income,y=packpc)) +
   geom_point(alpha=0.5) 
 ```
 
-![plot of chunk unnamed-chunk-5](blog_post/unnamed-chunk-5-1.png)
+![plot of chunk unnamed-chunk-5](../img/unnamed-chunk-5-1.png)
 
 
 Let me fit a linear model on the data.
@@ -132,7 +130,7 @@ ggplot(data=cigar, aes(x=income,y=packpc)) +
   geom_smooth(method="lm", color="red", size=1, se=FALSE)
 ```
 
-![plot of chunk unnamed-chunk-6](blog_post/unnamed-chunk-6-1.png)
+![plot of chunk unnamed-chunk-6](../img/unnamed-chunk-6-1.png)
 
 I suspect that the constant error variance assumption might be violated. Therefore, I need to do some diagnostics.
 
@@ -143,7 +141,7 @@ augmented_result <- broom::augment(lm)
 ggplot(augmented_result, aes(.fitted, .resid))+ geom_point(alpha=0.5)
 ```
 
-![plot of chunk unnamed-chunk-7](blog_post/unnamed-chunk-7-1.png)
+![plot of chunk unnamed-chunk-7](../img/unnamed-chunk-7-1.png)
 
 Since there is a trend in the plot above, I log transform income.
 
@@ -154,7 +152,7 @@ augmented_result2 <- broom::augment(lm2)
 ggplot(augmented_result2, aes(.fitted, .resid))+ geom_point(alpha=0.5)
 ```
 
-![plot of chunk unnamed-chunk-8](blog_post/unnamed-chunk-8-1.png)
+![plot of chunk unnamed-chunk-8](../img/unnamed-chunk-8-1.png)
 
 Since the residual is not scattered randomly around the zero horizontal line, since I do not have a strong theoretical rationale for the linear relationship, I opt in for nonparametric regression. Below, I will example different approaches that I discuss above.
 
@@ -173,7 +171,7 @@ ggplot(data=cigar, aes(x=log(income),y=packpc)) +
   ggtitle("Regression Spline and linear fit")
 ```
 
-![plot of chunk unnamed-chunk-9](blog_post/unnamed-chunk-9-1.png)
+![plot of chunk unnamed-chunk-9](../img/unnamed-chunk-9-1.png)
 
 As you can see, the blue curve is quite smooth at the knots that I selected. I could have used 17, 17.9, and 18.58 as my knots as they correspond to the quantiles of the x axis. I would lead to a similar result.
 
@@ -194,7 +192,7 @@ ggplot(cigar, aes(x = log(income), y = packpc)) +
   ggtitle("Kernel Smoothing with Box")
 ```
 
-![plot of chunk unnamed-chunk-10](blog_post/unnamed-chunk-10-1.png)
+![plot of chunk unnamed-chunk-10](../img/unnamed-chunk-10-1.png)
 
 
 I can see that the selected bandwidth (i.e., smoothing parameter) did not lead to a smooth function. I will show you how selection of the bandwidth affects the smoothness.
@@ -218,7 +216,7 @@ ggplot(cigar, aes(x = log(income), y = packpc)) +
   ggtitle("Kernel Smoothing with Box by different bandwidths")
 ```
 
-![plot of chunk unnamed-chunk-11](blog_post/unnamed-chunk-11-1.png)
+![plot of chunk unnamed-chunk-11](../img/unnamed-chunk-11-1.png)
 
 
 Now, I will first use the "normal" as my kernel.   
@@ -234,7 +232,7 @@ ggplot(cigar, aes(x = log(income), y = packpc)) +
   ggtitle("Kernel Smoothing with Normal")
 ```
 
-![plot of chunk unnamed-chunk-12](blog_post/unnamed-chunk-12-1.png)
+![plot of chunk unnamed-chunk-12](../img/unnamed-chunk-12-1.png)
 
 
 I can easily tell than `normal` leads to a much smoother estimation.
@@ -260,7 +258,7 @@ ggplot(cigar, aes(x = log(income), y = packpc)) +
   ggtitle("Kernel Smoothing with Normal by different bandwidths")
 ```
 
-![plot of chunk unnamed-chunk-13](blog_post/unnamed-chunk-13-1.png)
+![plot of chunk unnamed-chunk-13](../img/unnamed-chunk-13-1.png)
 
 
 ## Local Polynomial Regression
@@ -278,7 +276,7 @@ ggplot(data = cigar, aes(x = log(income), y = packpc)) +
   ggtitle("Local polynomial regression with different span")
 ```
 
-![plot of chunk unnamed-chunk-14](blog_post/unnamed-chunk-14-1.png)
+![plot of chunk unnamed-chunk-14](../img/unnamed-chunk-14-1.png)
 
 Let me show you how `span` influence the smoothness.
 
@@ -297,7 +295,7 @@ ggplot(data = cigar, aes(x = log(income), y = packpc)) +
   ggtitle("Local polynomial regression with different span")
 ```
 
-![plot of chunk unnamed-chunk-15](blog_post/unnamed-chunk-15-1.png)
+![plot of chunk unnamed-chunk-15](../img/unnamed-chunk-15-1.png)
 
 I am also interested in seeing the impact of the degree of the polynomial. While I can just modify the code above for this, I want to show you that `geom_smooth` from `ggplot2` can be used as well.
 
@@ -312,7 +310,7 @@ ggplot(data = cigar, aes(x = log(income), y = packpc)) +
   ggtitle("Loess with different degree of polynomial")
 ```
 
-![plot of chunk unnamed-chunk-16](blog_post/unnamed-chunk-16-1.png)
+![plot of chunk unnamed-chunk-16](../img/unnamed-chunk-16-1.png)
 
 # Smoothing spline
 
@@ -327,7 +325,7 @@ ggplot(data = cigar, aes(x = log(income), y = packpc)) +
   ggtitle("Smoothing spline")
 ```
 
-![plot of chunk unnamed-chunk-17](blog_post/unnamed-chunk-17-1.png)
+![plot of chunk unnamed-chunk-17](../img/unnamed-chunk-17-1.png)
 
 Let me put everything together in one plot:
 
@@ -349,7 +347,7 @@ ggplot(cigar, aes(x = log(income), y = packpc)) +
     scale_colour_manual(values =c("orange","red","darkgreen","blue","grey50"))
 ```
 
-![plot of chunk unnamed-chunk-18](blog_post/unnamed-chunk-18-1.png)
+![plot of chunk unnamed-chunk-18](../img/unnamed-chunk-18-1.png)
 
 From above, for the relationship in question, it seems that loess, regression spline, and kernel smoothing with normal kernel works better. 
 
