@@ -7,6 +7,8 @@ image: "img/a.jpg"
 date:   2015-04-20 12:12:12
 ---
 
+# Easy onboarding to Non-parametric regression models in R
+
 I often find myself quite lost when I am learning a new subject or topic which is not trivial. While I cannot deny the fact that the Internet makes information accessible, the Internet also creates information overload. If I am new to a topic, it is often hard to filter out the noise. Wouldn’t it be nice to have a way to tell which source is reliable and has accurate and high quality information? That can be a good machine learning implementation. Until that time, I have to live with the “current” Internet. But, I thought, maybe I can help. Since I am very thankful to bloggers who created great posts providing clear explanations and reproducible codes, I decided to write a blog post on a topic that I recently learn so that some curated information would help others like me.
 
 In this post, I am going to write on nonparametric regression model. I will try to refrain from complicated math formulas and proof and convoluted explanations (I delegate those to stats profs). Hopefully, I will provide a good introduction to non-parametric regression and some R codes to play with. Here is the outline of my post:
@@ -22,12 +24,12 @@ In this post, I am going to write on nonparametric regression model. I will try 
 # What is non-parametric regression?
 
 *Nonparametric regression* is defined as “a category of regression analysis in which the predictor does not take a predetermined form but is constructed according to information derived from the data” in [Wikipedia]( https://en.wikipedia.org/wiki/Nonparametric_regression). If you have a sufficient reason to believe that the response variable (i.e., left hand-side) is characterized by a “known function” of a set of parameters (i.e., right hand-side variables), you are in the realm of parametric regression. Depending on your data and your theory on the relationship that you want to uncover, you can use a linear model, a generalized linear model, and a nonlinear model. But in reality, the relationship may not be known. If that is the case, you are in the realm of nonparametric regression. Therefore, the objective of nonparametric regression is to discover unknown, flexible, often nonlinear relationships between the response variable of interest and the potential explanatory variables.
-b
+
 # When to use nonparametric regression?
 
 Here is a simple decision rules that would help deciding whether nonparametric regression is appropriate:
 
-h- If the functional relationship of response and explanatory variables is known, work with an appropriate parametric model. 
+- If the functional relationship of response and explanatory variables is known, work with an appropriate parametric model. 
 - If the relationship is not known, visually inspect data and try linear model. 
 - If linear model fits the data well (you can check the residual versus fitted plot and qqplot), use linear model.
 - If linear model does not fit or linear model assumptions are violated, try to transform variables or add new explanatory variable.
@@ -49,6 +51,7 @@ Here is a summary of pros and cons:
 # How does nonparametric regression work?
 
 In a traditional parametric regression model, the response variable (i.e., dependent variable) is a **known** function of explanatory variables (i.e., independent variables regressor, and covariates). In a non-parametric regression model, however, we do **not** impose any functional form. Nonparametric model assumes that $y_i = g(x_i) + e_i$, for $i=1, 2, ……, n$, where $g(.)$ is an unspecified regression function. There are various ways to estimate regression (i.e., smoothing) function. The most common methods are:
+
 -	Regression Splines
 -	Kernel Estimation
 -	Local Polynomial Regression
@@ -57,13 +60,16 @@ In a traditional parametric regression model, the response variable (i.e., depen
 Let me describe them quickly.
 
 ## Regression Splines
+
 The idea of regression spline is to split the range of the independent variables into a number of break points (called knots) and fitting a piecewise polynomial (i.e., spline) on the data between any consecutive knots. The method relies on the fact that any regression (smoothing) function can be approximated with a low order polynomial based on Taylor expansions. Once the regression function is estimated, it is smooth at the knots. As you can see in the following simulated regression splines, I have 2 knots and 3 splines. The splines are smooth at the knots. The number of knots is the smoothing parameter. The degree of smoothness is controlled by number of knots.  Knots can be placed evenly. Alternatively, a percentile-based knot-placing rule can be applied by putting more knots in the areas where more data is available [Wu, 2009]( https://books.google.ca/books?id=GpFklD7kloIC&printsec=frontcover#v=onepage&q&f=false).
 
 Regression splines are useful when we expect that in different segments of the independent variable data would behave quite differently. 
 
 
 
-![plot of chunk unnamed-chunk-2]({{site.baseurl}}/blob/master/_posts/blog_post/unnamed-chunk-2-1.png)
+![plot of chunk unnamed-chunk-2](../img/unnamed-chunk-2-1.png)
+
+![alternative](/img/unnamed-chunk-2-1.png)
 
 ## Kernel Estimation
 
@@ -85,7 +91,7 @@ The key to finding the most appropriate nonparametric estimation is to determine
 Since we don’t know the true $ g(t_i) )^2 $ , the optimum smoothing parameter can be approximated by a cross-validation. 
 If I plot total error and components, one can see that the choosing the right smoothing parameter is a balancing act between bias and the variance. 
 
-![plot of chunk unnamed-chunk-3](/blog_post/unnamed-chunk-3-1.png)
+![plot of chunk unnamed-chunk-3](blog_post/unnamed-chunk-3-1.png)
 
 The blue solid line is the total error, the declining convex is the variance (red dashed line) and the increasing convex is the squared bias. Therefore, one can see that the increasing in the smoothing parameter has opposite effects on bias and variance. The right parameter struck a good balance between bias and variance. The following table summarizes the effects on the smoothing parameter.
 
