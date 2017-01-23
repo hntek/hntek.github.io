@@ -27,7 +27,7 @@ In this post, I am going to write on nonparametric regression model. I will try 
 
 Here is a simple decision rules that would help deciding whether nonparametric regression is appropriate:
 
-- If the functional relationship of response and explanatory variables is known, work with an appropriate parametric model. 
+h- If the functional relationship of response and explanatory variables is known, work with an appropriate parametric model. 
 - If the relationship is not known, visually inspect data and try linear model. 
 - If linear model fits the data well (you can check the residual versus fitted plot and qqplot), use linear model.
 - If linear model does not fit or linear model assumptions are violated, try to transform variables or add new explanatory variable.
@@ -64,7 +64,7 @@ Regression splines are useful when we expect that in different segments of the i
 
 
 
-![plot of chunk unnamed-chunk-2](_posts/blog_post/unnamed-chunk-2-1.png)
+![plot of chunk unnamed-chunk-2]({{site.url}}/_posts/blog_post/unnamed-chunk-2-1.png)
 
 ## Kernel Estimation
 
