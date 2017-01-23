@@ -57,14 +57,13 @@ In a traditional parametric regression model, the response variable (i.e., depen
 Let me describe them quickly.
 
 ## Regression Splines
-
 The idea of regression spline is to split the range of the independent variables into a number of break points (called knots) and fitting a piecewise polynomial (i.e., spline) on the data between any consecutive knots. The method relies on the fact that any regression (smoothing) function can be approximated with a low order polynomial based on Taylor expansions. Once the regression function is estimated, it is smooth at the knots. As you can see in the following simulated regression splines, I have 2 knots and 3 splines. The splines are smooth at the knots. The number of knots is the smoothing parameter. The degree of smoothness is controlled by number of knots.  Knots can be placed evenly. Alternatively, a percentile-based knot-placing rule can be applied by putting more knots in the areas where more data is available [Wu, 2009]( https://books.google.ca/books?id=GpFklD7kloIC&printsec=frontcover#v=onepage&q&f=false).
 
 Regression splines are useful when we expect that in different segments of the independent variable data would behave quite differently. 
 
 
 
-![plot of chunk unnamed-chunk-2](https://github.com/hntek/hntek.github.io/blob/master/_posts/blog_post/unnamed-chunk-2-1.png)
+![plot of chunk unnamed-chunk-2]({{site.url}}/blob/master/_posts/blog_post/unnamed-chunk-2-1.png)
 
 ## Kernel Estimation
 
