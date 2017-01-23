@@ -4,10 +4,8 @@ subtitle: ""
 author: "Hatice Cavusoglu"
 avatar: "img/authors/wferr.png"
 image: "img/a.jpg"
-date:   2015-04-20 12:12:12
+date:   2017-01-23 4:49:00
 ---
-
-# Easy onboarding to Non-parametric regression models in R
 
 I often find myself quite lost when I am learning a new subject or topic which is not trivial. While I cannot deny the fact that the Internet makes information accessible, the Internet also creates information overload. If I am new to a topic, it is often hard to filter out the noise. Wouldn’t it be nice to have a way to tell which source is reliable and has accurate and high quality information? That can be a good machine learning implementation. Until that time, I have to live with the “current” Internet. But, I thought, maybe I can help. Since I am very thankful to bloggers who created great posts providing clear explanations and reproducible codes, I decided to write a blog post on a topic that I recently learn so that some curated information would help others like me.
 
