@@ -1,20 +1,353 @@
 ---
-title:  "Planes are cool!"
-subtitle: "The Fly!"
-author: "Wferr"
+title:  "Easy onboarding to Non-parametric regression models in R"
+subtitle: ""
+author: "Hatice Cavusoglu"
 avatar: "img/authors/wferr.png"
 image: "img/a.jpg"
 date:   2015-04-20 12:12:12
 ---
 
-### Dolor sit amet?
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Proin vestibulum non mi non pulvinar. Donec tempus risus vel ex fringilla tempor. Vivamus pharetra non mauris quis fermentum. Vestibulum sed maximus elit, sit amet suscipit orci. Morbi at enim at libero dignissim egestas vel ac nisi. Etiam at lectus a arcu sodales consequat. Aliquam consequat ligula sed purus tincidunt, a ultrices nibh dapibus. Phasellus convallis ipsum nec semper ultricies. In facilisis lacus velit, sit amet lacinia velit blandit id. Nullam ut magna erat. Aliquam sit amet dapibus odio, aliquet tempus tortor. Donec in nisi massa.
+I often find myself quite lost when I am learning a new subject or topic which is not trivial. While I cannot deny the fact that the Internet makes information accessible, the Internet also creates information overload. If I am new to a topic, it is often hard to filter out the noise. Wouldn’t it be nice to have a way to tell which source is reliable and has accurate and high quality information? That can be a good machine learning implementation. Until that time, I have to live with the “current” Internet. But, I thought, maybe I can help. Since I am very thankful to bloggers who created great posts providing clear explanations and reproducible codes, I decided to write a blog post on a topic that I recently learn so that some curated information would help others like me.
 
-### Aliquam suscipit.
-Cras eget nisl accumsan, porta nisl in, egestas sapien. Vestibulum gravida nulla sed facilisis tempor. Suspendisse maximus nisi sit amet velit sodales fringilla. Vivamus luctus risus eget dui consectetur porttitor. Maecenas ut ultrices orci. Maecenas mollis est eu sodales mollis. Nulla facilisi. Suspendisse eros arcu, elementum sed sem eu, pharetra rhoncus odio. Proin nec tincidunt velit. Cras nisl augue, faucibus sed mauris in, vestibulum mollis nisl. Nam id libero ultrices, consequat ex vitae, convallis nulla.
+In this post, I am going to write on nonparametric regression model. I will try to refrain from complicated math formulas and proof and convoluted explanations (I delegate those to stats profs). Hopefully, I will provide a good introduction to non-parametric regression and some R codes to play with. Here is the outline of my post:
 
-Suspendisse lorem odio, blandit at nisl quis, hendrerit tempus tellus. Donec eget leo quis nisi vulputate consectetur. Praesent dignissim enim elit, congue luctus nisl cursus at. Sed rutrum molestie risus. Donec vulputate gravida accumsan. Vivamus tempus ullamcorper eleifend. Sed sagittis mi ut dolor tincidunt, ac rutrum nisi commodo.
+- What is nonparametric regression?
+- When to use nonparametric regression?
+- Pros/Cons
+- How does nonparametric regression work?
+- Examples of popular smoothing regressions?
+- How much to smooth?
+- How to do it in R?
 
-Fusce non elit in diam rutrum vestibulum. Donec vitae elementum erat. Praesent elementum eget justo at bibendum. Fusce interdum diam lorem, ut placerat elit pretium quis. Quisque eu urna at quam commodo sagittis. Etiam posuere convallis tincidunt. Phasellus vitae ligula neque. Vivamus a purus at dolor iaculis placerat. Curabitur convallis eu lacus congue sagittis.
+# What is non-parametric regression?
 
-Aliquam suscipit fermentum mauris a accumsan. In facilisis, mauris quis pulvinar tempus, turpis sapien sodales nibh, nec feugiat augue est quis nisi. Fusce eget odio feugiat, luctus quam et, dapibus nulla. Sed ornare lacus non libero lacinia pretium. In eu dui vitae purus euismod feugiat ac ac est. Morbi vitae pretium lorem, non eleifend felis. Nullam at massa feugiat, rutrum elit at, semper lacus. Etiam vel rutrum felis. Nullam quis auctor lorem, et tempor arcu.
+*Nonparametric regression* is defined as “a category of regression analysis in which the predictor does not take a predetermined form but is constructed according to information derived from the data” in [Wikipedia]( https://en.wikipedia.org/wiki/Nonparametric_regression). If you have a sufficient reason to believe that the response variable (i.e., left hand-side) is characterized by a “known function” of a set of parameters (i.e., right hand-side variables), you are in the realm of parametric regression. Depending on your data and your theory on the relationship that you want to uncover, you can use a linear model, a generalized linear model, and a nonlinear model. But in reality, the relationship may not be known. If that is the case, you are in the realm of nonparametric regression. Therefore, the objective of nonparametric regression is to discover unknown, flexible, often nonlinear relationships between the response variable of interest and the potential explanatory variables.
+
+# When to use nonparametric regression?
+
+Here is a simple decision rules that would help deciding whether nonparametric regression is appropriate:
+
+- If the functional relationship of response and explanatory variables is known, work with an appropriate parametric model. 
+- If the relationship is not known, visually inspect data and try linear model. 
+- If linear model fits the data well (you can check the residual versus fitted plot and qqplot), use linear model.
+- If linear model does not fit or linear model assumptions are violated, try to transform variables or add new explanatory variable.
+- If neither transformation or adding new explanatory variable(s) works, nonlinear is appropriate for you.
+
+# Pros and Cons
+
+Major advantage of nonparametric regression model is that you do not need to know the relationship between dependent variable and independent variables. Therefore, it is quite flexible. Since the data drives the functional form estimated, nonparametric models can capture unexpected patterns of data. The presence of extreme observations (outliers) can be a big problem in parametric model as it can bias the estimations. However, nonparametric regression model is less susceptible to outliers. 
+
+Major disadvantage of nonparametric regression model is that it demands larger datasets. The reason is that the data is used to determine the functional form of the relationship as well as the estimation of the parameters of the relationship. Another disadvantage that might require some time commitment from the perspective of the data scientist is that the selection of the smoothing parameter is very important. I will discuss this in more detail below. 
+Here is a summary of pros and cons:
+
+|Pros|Cons|
+|------------------------------------------------|------------------------------------------------|
+|No need to specify a functional form between the response and dependent variables|It requires larger sample size than parametric models.|
+|Can capture unexpected and unusual aspects of data. |Appropriate smoothing parameter needs to be chosen.|
+|Outliers are not as influential as in linear models. ||
+
+# How does nonparametric regression work?
+
+In a traditional parametric regression model, the response variable (i.e., dependent variable) is a **known** function of explanatory variables (i.e., independent variables regressor, and covariates). In a non-parametric regression model, however, we do **not** impose any functional form. Nonparametric model assumes that $y_i = g(x_i) + e_i$, for $i=1, 2, ……, n$, where $g(.)$ is an unspecified regression function. There are various ways to estimate regression (i.e., smoothing) function. The most common methods are:
+
+-	Regression Splines
+-	Kernel Estimation
+-	Local Polynomial Regression
+-	Smoothing Spline
+
+Let me describe them quickly.
+
+## Regression Splines
+
+The idea of regression spline is to split the range of the independent variables into a number of break points (called knots) and fitting a piecewise polynomial (i.e., spline) on the data between any consecutive knots. The method relies on the fact that any regression (smoothing) function can be approximated with a low order polynomial based on Taylor expansions. Once the regression function is estimated, it is smooth at the knots. As you can see in the following simulated regression splines, I have 2 knots and 3 splines. The splines are smooth at the knots. The number of knots is the smoothing parameter. The degree of smoothness is controlled by number of knots.  Knots can be placed evenly. Alternatively, a percentile-based knot-placing rule can be applied by putting more knots in the areas where more data is available [Wu, 2009]( https://books.google.ca/books?id=GpFklD7kloIC&printsec=frontcover#v=onepage&q&f=false).
+
+Regression splines are useful when we expect that in different segments of the independent variable data would behave quite differently. 
+
+
+
+![plot of chunk unnamed-chunk-2](blog_post/unnamed-chunk-2-1.png)
+
+## Kernel Estimation
+
+Kernel estimation uses observations in the local neighborhood of a given observation to determine the predicted value for that observation. A kernel estimation of an observation is determined by weighted average of the values of the response variable for the observations in the local neighborhood of that observation. The function used to determine the weight is called **kernel function**. The simplest version takes the mean value of the response variable in the local neighborhood of the focal observation. This kernel function is called *Boxcar* function. Boxcar function is rarely used as it leads to estimation which is not smooth. Most used alternative is Gaussian (i.e., Normal) Kernel. Normal Kernel function gives more weights to observations closer to the focal observation. 
+
+## Local Polynomial Regression
+
+An issue with kernel smoothing is that its estimate does not behave nicely at the edge of the range of the independent variable ([p.10, Geyer, 2013]( http://www.stat.umn.edu/geyer/5601/notes/smoo.pdf)). To alleviate, local polynomial kernel smoothing method can be used. It locally approximates the smoothing function with a low-order polynomial by minimizing the weighted least square with the local neighborhood of the focal observation. The order of the polynomial (k) has to be specified. Common choices are k=0 (local constant), k=1 (linear), k=2 (quadratic). Local polynomial regression with k<=2 is called *LOESS*. Please note that when k=0, it is equivalent to boxcar kernel estimation. 
+
+## Smoothing Splines:
+
+Smoothing spline uses a smoothing function which is found by minimizing penalized sum of squares (PSS). PSS is the sum of two quantities: the sum of squared error and a roughness penalty which is based on the second derivative of the smoothing function. The smoothing parameter determines how much roughness penalty should be included in the objective function to be used in the optimization. When the smoothing parameter approaches zero, the smoothing function will be very rough. However, when the smoothing parameter approaches infinity, since the roughness is excessively costly, the smoothing function will converge to the linear model. 
+
+## How much to smooth?
+
+When it comes to smoothing we do not want oversmoothing or undersmoothing. Oversmoothing occurs when the model reveals every detail of the true curve. Undersmoothing occurs when the model does not capture key aspects of the true curve.
+The key to finding the most appropriate nonparametric estimation is to determine the right smoothing parameter (i.e bandwidth (h) for kernel estimation). When the bandwidth is small, bias is low but variance is high. When the bandwidth is large bias is higher and variance is lower. In fact, the choice of the kernel function is [not too critical]( http://wwwf.imperial.ac.uk/~bm508/teaching/AppStats/Lecture7.pdf)). The best estimation of smoothing parameter is the one that minimizes the mean square error (MSE).
+ $MSE(\hat{g}_h (t)) = \sum_{i = 1}{n}E(\hat{g}_h (t_i) – g(t_i) )^2 = $bias^2$ + variance
+Since we don’t know the true $ g(t_i) )^2 $ , the optimum smoothing parameter can be approximated by a cross-validation. 
+If I plot total error and components, one can see that the choosing the right smoothing parameter is a balancing act between bias and the variance. 
+
+![plot of chunk unnamed-chunk-3](blog_post/unnamed-chunk-3-1.png)
+
+The blue solid line is the total error, the declining convex is the variance (red dashed line) and the increasing convex is the squared bias. Therefore, one can see that the increasing in the smoothing parameter has opposite effects on bias and variance. The right parameter struck a good balance between bias and variance. The following table summarizes the effects on the smoothing parameter.
+
+|Smoothing Parameter | Bias | Variance | Smoothness of the regression function|
+|----------------|----------------|----------------|--------------------|
+|low | low|high |rougher|
+|high|high|low|smoother|
+
+## How to do it in R?
+
+I am going to use `Cigarette` dataset from `Ecdat` package. The [dataset](https://rdrr.io/cran/Ecdat/man/Cigarette.html) has the cigarette consumption per capita by states from 1985 to 1995. Let me load the data first.
+
+
+```r
+# you need to install the package if not already installed. Use install.packages("Ecdat")
+suppressMessages(library(Ecdat)) 
+cigar <- Cigarette # I just chose cigar as the name of my dataframe
+```
+
+I will be focusing on `packpc` (the number of packs of cigarette) and `income` (state personal income (total, nominal)). The relationship that I am interested is between packpc ~ income. Here is how the data But, I do not know a theory that would suggest a parametric model for this relationship that I am interested in. Let me first see the data in a scatter plot.
+
+
+```r
+ggplot(data=cigar, aes(x=income,y=packpc)) +
+  geom_point(alpha=0.5) 
+```
+
+![plot of chunk unnamed-chunk-5](blog_post/unnamed-chunk-5-1.png)
+
+
+Let me fit a linear model on the data.
+
+
+
+```r
+ggplot(data=cigar, aes(x=income,y=packpc)) +
+  geom_point(alpha=0.5) +
+  geom_smooth(method="lm", color="red", size=1, se=FALSE)
+```
+
+![plot of chunk unnamed-chunk-6](blog_post/unnamed-chunk-6-1.png)
+
+I suspect that the constant error variance assumption might be violated. Therefore, I need to do some diagnostics.
+
+
+```r
+lm <- lm(packpc~income, data=cigar)
+augmented_result <- broom::augment(lm)
+ggplot(augmented_result, aes(.fitted, .resid))+ geom_point(alpha=0.5)
+```
+
+![plot of chunk unnamed-chunk-7](blog_post/unnamed-chunk-7-1.png)
+
+Since there is a trend in the plot above, I log transform income.
+
+
+```r
+lm2 <- lm(packpc~log(income), data=cigar)
+augmented_result2 <- broom::augment(lm2)
+ggplot(augmented_result2, aes(.fitted, .resid))+ geom_point(alpha=0.5)
+```
+
+![plot of chunk unnamed-chunk-8](blog_post/unnamed-chunk-8-1.png)
+
+Since the residual is not scattered randomly around the zero horizontal line, since I do not have a strong theoretical rationale for the linear relationship, I opt in for nonparametric regression. Below, I will example different approaches that I discuss above.
+
+### Regression Spline
+
+Let me start with the regression spline by `ns` from `spline` package. I decided to use knots at 17, 18, and 19. 
+
+
+```r
+np1 <- lm(packpc~ns(log(income), knots=c(17,18,19)), data=cigar)
+
+ggplot(data=cigar, aes(x=log(income),y=packpc)) +
+  geom_point(alpha=0.5) +
+  geom_smooth(method="lm", color="red", size=1, se=FALSE) +
+  geom_line(data=data.frame(logincome=log(cigar$income), packpchat=predict(np1)),aes(logincome,packpchat),color="blue", size=1) +
+  ggtitle("Regression Spline and linear fit")
+```
+
+![plot of chunk unnamed-chunk-9](blog_post/unnamed-chunk-9-1.png)
+
+As you can see, the blue curve is quite smooth at the knots that I selected. I could have used 17, 17.9, and 18.58 as my knots as they correspond to the quantiles of the x axis. I would lead to a similar result.
+
+## Kernel Smoothing
+
+I will use `ksmooth` function for kernel smoothing. The function comes with two kernels: "box" and "normal". bandwidth parameter is the smoothing parameter. Use x.point argument if you want to obtain prediction at the x values. I will first use the "box" as my kernel.   
+
+
+```r
+LOGINCOME <- log(cigar$income)
+PACKPC <- cigar$packpc
+np2 <- ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("box"), bandwidth = 0.5 , x.points=LOGINCOME)
+
+ggplot(cigar, aes(x = log(income), y = packpc)) + 
+  geom_point(alpha=0.3) +
+  geom_line(data = data.frame(x= np2[1], y=np2[2]), aes(x = x, y = y), colour = "blue", size=1) +
+  ggtitle("Kernel Smoothing with Box")
+```
+
+![plot of chunk unnamed-chunk-10](blog_post/unnamed-chunk-10-1.png)
+
+
+I can see that the selected bandwidth (i.e., smoothing parameter) did not lead to a smooth function. I will show you how selection of the bandwidth affects the smoothness.
+
+
+```r
+ggplot(cigar, aes(x = log(income), y = packpc)) + 
+  geom_point(alpha=0.3) +
+  geom_line(data = data.frame(x= ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("box"), bandwidth = 0.5 , x.points=LOGINCOME)[1], y=ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("box"), bandwidth = 0.5 , x.points=LOGINCOME)[2],bandwidth="0.5"), aes(x = x, y = y, color=bandwidth), size=1) +
+  geom_line(data = data.frame(x= ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("box"), bandwidth = 1 , x.points=LOGINCOME)[1], y=ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("box"), bandwidth = 1 , x.points=LOGINCOME)[2],bandwidth="1"), aes(x = x, y = y, color=bandwidth), size=1) +
+  geom_line(data = data.frame(x= ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("box"), bandwidth = 3 , x.points=LOGINCOME)[1], y=ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("box"), bandwidth = 3 , x.points=LOGINCOME)[2],bandwidth="3"), aes(x = x, y = y, color=bandwidth), size=1) +
+  geom_line(data = data.frame(x= ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("box"), bandwidth = 5 , x.points=LOGINCOME)[1], y=ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("box"), bandwidth = 5 , x.points=LOGINCOME)[2],bandwidth="5"), aes(x = x, y = y, color=bandwidth), size=1) +
+  ggtitle("Kernel Smoothing with Box by different bandwidths")
+```
+
+![plot of chunk unnamed-chunk-11](blog_post/unnamed-chunk-11-1.png)
+
+
+Now, I will first use the "normal" as my kernel.   
+
+
+```r
+np3 <- ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("normal"), bandwidth = 0.5 , x.points=LOGINCOME)
+
+ggplot(cigar, aes(x = log(income), y = packpc)) + 
+  geom_point(alpha=0.3) +
+  geom_line(data = data.frame(x= np3[1], y=np3[2]), aes(x = x, y = y), colour = "blue", size=1) +
+  ggtitle("Kernel Smoothing with Normal")
+```
+
+![plot of chunk unnamed-chunk-12](blog_post/unnamed-chunk-12-1.png)
+
+
+I can easily tell than `normal` leads to a much smoother estimation.
+
+Similar to "box", I will show you how selection of the bandwidth affects the smoothness.
+
+
+```r
+ggplot(cigar, aes(x = log(income), y = packpc)) + 
+  geom_point(alpha=0.3) +
+  geom_line(data = data.frame(x= ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("normal"), bandwidth = 0.1 , x.points=LOGINCOME)[1], y=ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("normal"), bandwidth = 0.1 , x.points=LOGINCOME)[2],bandwidth="0.1"), aes(x = x, y = y, color=bandwidth), size=1) +
+  geom_line(data = data.frame(x= ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("normal"), bandwidth = 0.5 , x.points=LOGINCOME)[1], y=ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("normal"), bandwidth = 0.5 , x.points=LOGINCOME)[2],bandwidth="0.5"), aes(x = x, y = y, color=bandwidth), size=1) +
+  geom_line(data = data.frame(x= ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("normal"), bandwidth = 1 , x.points=LOGINCOME)[1], y=ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("normal"), bandwidth = 1 , x.points=LOGINCOME)[2],bandwidth="1"), aes(x = x, y = y, color=bandwidth), size=1) +
+  geom_line(data = data.frame(x= ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("normal"), bandwidth = 2 , x.points=LOGINCOME)[1], y=ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("normal"), bandwidth = 2 , x.points=LOGINCOME)[2],bandwidth="2"), aes(x = x, y = y, color=bandwidth), size=1)  +
+  ggtitle("Kernel Smoothing with Normal by different bandwidths")
+```
+
+![plot of chunk unnamed-chunk-13](blog_post/unnamed-chunk-13-1.png)
+
+
+## Local Polynomial Regression
+
+I will use `loess` for the local polynomial regression estimation. `span` argument to `loess` function controls for smoothness. It takes values between 0 and 1. `degree` argument to `loess` function indicates degree of polynomial to be used.
+
+
+```r
+np4 <- loess( packpc~ log(income) , 
+                   data = cigar, span = 0.3, degree=2)
+
+ggplot(data = cigar, aes(x = log(income), y = packpc)) + 
+  geom_point(alpha=0.3) +
+  geom_line(data = data.frame(x=log(cigar$income), y=predict(np4)) , aes(x = x, y = y), colour = "blue", size=1)+
+  ggtitle("Local polynomial regression with different span")
+```
+
+![plot of chunk unnamed-chunk-14](blog_post/unnamed-chunk-14-1.png)
+
+Let me show you how `span` influence the smoothness.
+
+
+```r
+ggplot(data = cigar, aes(x = log(income), y = packpc)) + 
+  geom_point(alpha=0.1) +
+  geom_line(data = data.frame(x=log(cigar$income), y=predict(loess( packpc~ log(income) , 
+                   data = cigar, span = 0.1, degree=2)),span="0.1") , aes(x = x, y = y, color=span), size=1) +
+  geom_line(data = data.frame(x=log(cigar$income), y=predict(loess( packpc~ log(income) , 
+                   data = cigar, span = 0.3, degree=2)),span="0.3") , aes(x = x, y = y, color=span), size=1) +
+  geom_line(data = data.frame(x=log(cigar$income), y=predict(loess( packpc~ log(income) , 
+                   data = cigar, span = 0.5, degree=2)),span="0.5") , aes(x = x, y = y, color=span), size=1)+
+  geom_line(data = data.frame(x=log(cigar$income), y=predict(loess( packpc~ log(income) , 
+                   data = cigar, span = 0.8, degree=2)),span="0.8") , aes(x = x, y = y, color=span), size=1) +
+  ggtitle("Local polynomial regression with different span")
+```
+
+![plot of chunk unnamed-chunk-15](blog_post/unnamed-chunk-15-1.png)
+
+I am also interested in seeing the impact of the degree of the polynomial. While I can just modify the code above for this, I want to show you that `geom_smooth` from `ggplot2` can be used as well.
+
+
+```r
+ggplot(data = cigar, aes(x = log(income), y = packpc)) + 
+  geom_point(alpha=0.1) +
+  geom_smooth(method="loess", method.args=c(degree=0), se=FALSE, color="darkblue", size=1)+
+  geom_smooth(method="loess", method.args=c(degree=1), se=FALSE, color="red", size=1)+
+  geom_smooth(method="loess", method.args=c(degree=2), se=FALSE, color="purple", size=1) + 
+  ylim(50,150) +
+  ggtitle("Loess with different degree of polynomial")
+```
+
+![plot of chunk unnamed-chunk-16](blog_post/unnamed-chunk-16-1.png)
+
+# Smoothing spline
+
+I am going to use `smooth.spline` from `stats` package of R. 
+
+
+```r
+np5 <- smooth.spline(log(cigar$income), cigar$packpc)
+ggplot(data = cigar, aes(x = log(income), y = packpc)) + 
+  geom_point(alpha=0.1) +
+  geom_line(data=data.frame(x=np5$x, y=np5$y),aes(x=x, y=y), color="blue", size=1) +
+  ggtitle("Smoothing spline")
+```
+
+![plot of chunk unnamed-chunk-17](blog_post/unnamed-chunk-17-1.png)
+
+Let me put everything together in one plot:
+
+
+```r
+ggplot(cigar, aes(x = log(income), y = packpc)) + 
+  geom_point(alpha=0.3) +
+  geom_line(data=data.frame(logincome=log(cigar$income), packpchat=predict(lm(packpc~ns(log(income), knots=c(17,18,19)), data=cigar)),kernel="Regression spline"),aes(logincome,packpchat,color=kernel), size=1) +
+  geom_line(data = data.frame(x= ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("box"), bandwidth = 3 , x.points=LOGINCOME)[1], y=ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("box"), bandwidth = 3 , x.points=LOGINCOME)[2], kernel="Box with h=3"), aes(x = x, y = y, color=kernel), size=1)   +
+  geom_line(data = data.frame(x= ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("normal"), bandwidth = 1 , x.points=LOGINCOME)[1], y=ksmooth(x = LOGINCOME, y = PACKPC,
+        kernel = c("normal"), bandwidth = 1 , x.points=LOGINCOME)[2],kernel="Normal with h=1"), aes(x = x, y = y, color=kernel), size=1) +
+  geom_line(data = data.frame(x=log(cigar$income), y=predict(loess( packpc~ log(income) , 
+                   data = cigar, span = 0.8, degree=2)),kernel="Loess with span=0.8") , aes(x = x, y = y, color=kernel), size=1) +
+  geom_line(data=data.frame(x=np5$x, y=np5$y, kernel="Smooth spline"),aes(x=x, y=y, color=kernel), size=1) +
+  ggtitle("Nonparametric Estimation with different approaches") +ylim(70,125) + 
+    scale_colour_manual(values =c("orange","red","darkgreen","blue","grey50"))
+```
+
+![plot of chunk unnamed-chunk-18](blog_post/unnamed-chunk-18-1.png)
+
+From above, for the relationship in question, it seems that loess, regression spline, and kernel smoothing with normal kernel works better. 
+
+As I discuss earlier in the post, the selection of the smoothing parameter is essential in determining the right smoothing function. Cross validation can be used to determine the right smoothing parameters. Since I need to sleep, I am leaving the determination of the smoothing parameter to another blog post. 
+
