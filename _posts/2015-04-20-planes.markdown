@@ -22,7 +22,7 @@ In this post, I am going to write on nonparametric regression model. I will try 
 # What is non-parametric regression?
 
 *Nonparametric regression* is defined as “a category of regression analysis in which the predictor does not take a predetermined form but is constructed according to information derived from the data” in [Wikipedia]( https://en.wikipedia.org/wiki/Nonparametric_regression). If you have a sufficient reason to believe that the response variable (i.e., left hand-side) is characterized by a “known function” of a set of parameters (i.e., right hand-side variables), you are in the realm of parametric regression. Depending on your data and your theory on the relationship that you want to uncover, you can use a linear model, a generalized linear model, and a nonlinear model. But in reality, the relationship may not be known. If that is the case, you are in the realm of nonparametric regression. Therefore, the objective of nonparametric regression is to discover unknown, flexible, often nonlinear relationships between the response variable of interest and the potential explanatory variables.
-
+b
 # When to use nonparametric regression?
 
 Here is a simple decision rules that would help deciding whether nonparametric regression is appropriate:
@@ -63,7 +63,7 @@ Regression splines are useful when we expect that in different segments of the i
 
 
 
-![plot of chunk unnamed-chunk-2]({{site.url}}/blob/master/_posts/blog_post/unnamed-chunk-2-1.png)
+![plot of chunk unnamed-chunk-2]({{site.baseurl}}/blob/master/_posts/blog_post/unnamed-chunk-2-1.png)
 
 ## Kernel Estimation
 
