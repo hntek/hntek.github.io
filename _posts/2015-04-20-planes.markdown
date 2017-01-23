@@ -7,7 +7,7 @@ image: "img/a.jpg"
 date:   2015-04-20 12:12:12
 ---
 
-I often find myself quite lost when I am learning a new subject or topic which is not trivial. While I cannot deny the fact that the Internet makes information accessible, the Internet also creates information overload. If I am new to a topic, it is often hard to filter out the noise. Wouldn’t it be nice to have a way to tell which source is reliable and has accurate and high quality information? That can be a good machine learning implementation. Until that time, I have to live with the “current” Internet. But, I thought, maybe I can help. Since I am very thankful to bloggers who created great posts providing clear explanations and reproducible codes, I decided to write a blog post on a topic that I recently learn so that some curated information would help others like me.
+tI often find myself quite lost when I am learning a new subject or topic which is not trivial. While I cannot deny the fact that the Internet makes information accessible, the Internet also creates information overload. If I am new to a topic, it is often hard to filter out the noise. Wouldn’t it be nice to have a way to tell which source is reliable and has accurate and high quality information? That can be a good machine learning implementation. Until that time, I have to live with the “current” Internet. But, I thought, maybe I can help. Since I am very thankful to bloggers who created great posts providing clear explanations and reproducible codes, I decided to write a blog post on a topic that I recently learn so that some curated information would help others like me.
 
 In this post, I am going to write on nonparametric regression model. I will try to refrain from complicated math formulas and proof and convoluted explanations (I delegate those to stats profs). Hopefully, I will provide a good introduction to non-parametric regression and some R codes to play with. Here is the outline of my post:
 
@@ -17,7 +17,7 @@ In this post, I am going to write on nonparametric regression model. I will try 
 - How does nonparametric regression work?
 - Examples of popular smoothing regressions?
 - How much to smooth?
-- How to do it in R?
+t- How to do it in R?
 
 # What is non-parametric regression?
 
@@ -27,7 +27,7 @@ In this post, I am going to write on nonparametric regression model. I will try 
 
 Here is a simple decision rules that would help deciding whether nonparametric regression is appropriate:
 
-- If the functional relationship of response and explanatory variables is known, work with an appropriate parametric model. 
+h- If the functional relationship of response and explanatory variables is known, work with an appropriate parametric model. 
 - If the relationship is not known, visually inspect data and try linear model. 
 - If linear model fits the data well (you can check the residual versus fitted plot and qqplot), use linear model.
 - If linear model does not fit or linear model assumptions are violated, try to transform variables or add new explanatory variable.
@@ -65,7 +65,7 @@ Regression splines are useful when we expect that in different segments of the i
 
 
 
-![plot of chunk unnamed-chunk-2](blog_post/unnamed-chunk-2-1.png)
+![plot of chunk unnamed-chunk-2](https://hntek.github.io/_posts/blog_post/unnamed-chunk-2-1.png)
 
 ## Kernel Estimation
 
