@@ -64,7 +64,7 @@ Regression splines are useful when we expect that in different segments of the i
 
 
 
-![plot of chunk unnamed-chunk-2]({{site.url}}/_posts/blog_post/unnamed-chunk-2-1.png)
+![plot of chunk unnamed-chunk-2](https://github.com/hntek/hntek.github.io/blob/master/_posts/blog_post/unnamed-chunk-2-1.png)
 
 ## Kernel Estimation
 
